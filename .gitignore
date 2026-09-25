@@ -1,0 +1,15 @@
+bin/
+obj/
+artifacts/
+.vs/
+.idea/
+*.user
+*.suo
+*.log
+*.dll
+*.zip
+
+# Never commit local game/runtime inputs.
+MelonLoader/
+Schedule I_Data/
+UserData/
