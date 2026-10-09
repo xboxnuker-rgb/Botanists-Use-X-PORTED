@@ -6,7 +6,7 @@ Port the legacy Botanist Use Soil Pourer and Botanist Use Sprinkler IL2CPP mods 
 
 ## Target
 
-- Schedule I `0.4.6f13`
+- Schedule I `0.4.7f12` (Steam public build `25796331`)
 - Unity `2022.3.62f2`
 - MelonLoader `0.7.0 Open-Beta`
 - Backend: IL2CPP
@@ -32,7 +32,7 @@ The port patches only specialized soil and water behavior overrides. It leaves t
 
 Static API verification and builds are performed by `scripts/build-il2cpp.ps1`.
 
-Verified on 2026-09-25 with:
+Reverified offline on 2026-10-09 with:
 
 ```powershell
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot '<game>\MelonLoader' -DotNet '<dotnet-6-sdk>\dotnet.exe'
@@ -43,15 +43,18 @@ Results:
 - Game API verification: 27 checks passed.
 - Build: succeeded with 0 warnings and 0 errors.
 - Compiled artifact verification: 27 checks passed.
-- `Assembly-CSharp.dll` SHA-256: `0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA`.
-- `BotanistUseSoilPourer.dll` SHA-256: `1AB6316549C0E0F0E3FA64186205490BC28E50348E3AD464014239A9A94F2DFD`.
-- `BotanistUseSprinkler.dll` SHA-256: `22CBCCC1A2EC57568EABFF2AF388FE4BB397721DD574052B87BA5A3722417877`.
-- `BotanistsUseX.dll` SHA-256: `A07C59A07E68763644D53DBF6886C0E2B0018071CE0FFD7ED19FB3169C92535C`.
-- `BotanistUseSoilPourer-2.0.0.zip` SHA-256: `61EB0A52E461DB8B4B5B963D01430353BBA5758221A5E6216FBE93CE096456C2`.
-- `BotanistUseSprinkler-2.0.0.zip` SHA-256: `7F4CC52569876F089DC8EF98E45085BC221199B848131317DCE4C539FFE12AE9`.
-- `BotanistsUseX-2.0.0.zip` SHA-256: `9FDEF1F4D37A93BAA7831EB900B54812D2D5BEDFDCCE7C14200A89C3E6DE8DAD`.
+- `GameAssembly.dll` SHA-256: `61829050E56CA180D67BE592E4BFE61EC97D2E9573F720D90A54E318A7E4381D`.
+- Generated `Assembly-CSharp.dll` SHA-256: `CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC`.
+- `BotanistUseSoilPourer.dll` SHA-256: `BFAD9337787B667071A8CB65B15A17652EFDB78759C54418B65115EADFC52B76`.
+- `BotanistUseSprinkler.dll` SHA-256: `7D236EB0EA2D1734A513644E7A9CDEE89D9291768D92C050A29E8D5529CFBC68`.
+- `BotanistsUseX.dll` SHA-256: `5B430BF64846B519485B5F58A39071E537B698E28D50CF025BC1540A34B395F8`.
+- `BotanistUseSoilPourer-2.0.0.zip` SHA-256: `3B4820EF9AEE905FAAB9504BD1A4D00E07AE933ECD0DC56B4A3A6F80905DD829`.
+- `BotanistUseSprinkler-2.0.0.zip` SHA-256: `3BF018D84C876339418957951AEDBBA00C9C1ED84910B74F8194D6B6211A73ED`.
+- `BotanistsUseX-2.0.0.zip` SHA-256: `B3CB335AFD7F03186DB256FB952AA4E9DD002E99D01FF7DFC87562A7144C0A57`.
 
-Runtime status: not yet tested in game. The pre-port failure is confirmed in the existing MelonLoader `Latest.log`; no game launch was required for diagnosis.
+Cpp2IL inspection of the `0.4.7f12` native methods confirmed that the specialized soil and water success methods retain the expected semantics. The grow-container action coroutine still invokes the success method before its normal item decrement/trash path and ends through the networked behavior-disable path.
+
+Runtime status: the rebuilt ports have not yet been enabled or tested in game. The pre-port failure is confirmed in an existing MelonLoader log; no game launch was performed for this revalidation.
 
 ## Required runtime scenarios
 

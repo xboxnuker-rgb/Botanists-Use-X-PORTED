@@ -17,6 +17,7 @@ if ($LASTEXITCODE) { exit $LASTEXITCODE }
 & $DotNet build $solutionPath `
     --configuration Release `
     --property:MelonLoaderRoot="$MelonLoaderRoot" `
+    --maxcpucount:1 `
     --nologo
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
 

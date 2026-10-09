@@ -3,7 +3,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string] $MelonLoaderRoot,
 
-    [string] $ExpectedAssemblySha256 = "0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA"
+    [string] $ExpectedAssemblySha256 = "CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC"
 )
 
 $ErrorActionPreference = "Stop"
@@ -87,8 +87,13 @@ try {
             throw "Missing type while checking method: $typeName"
         }
 
-        $matches = @($type.Methods | Where-Object {
-            if ($_.Name -cne $methodName -or $_.Parameters.Count -ne $parameterTypes.Count) {
+        $namedMethods = @($type.Methods | Where-Object { $_.Name -ceq $methodName })
+        if ($namedMethods.Count -ne 1) {
+            throw "Expected one unambiguous method named $typeName::$methodName for Harmony/direct binding; found $($namedMethods.Count)."
+        }
+
+        $matches = @($namedMethods | Where-Object {
+            if ($_.Parameters.Count -ne $parameterTypes.Count) {
                 return $false
             }
 
@@ -168,7 +173,7 @@ try {
     Assert-Method $growContainer "SetRemainingSoilUses" "System.Void" @("System.Int32")
     Assert-Method $growContainer "SyncSoilData" "System.Void"
 
-    Write-Output "Schedule I 0.4.6f13 IL2CPP Botanists Use X API verification passed ($script:PassCount checks)."
+    Write-Output "Schedule I 0.4.7f12 IL2CPP Botanists Use X API verification passed ($script:PassCount checks)."
 }
 finally {
     $assembly.Dispose()

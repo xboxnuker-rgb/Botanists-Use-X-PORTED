@@ -6,7 +6,7 @@ Modern IL2CPP ports of two botanist equipment-automation mods, plus a combined c
 - `BotanistUseSprinkler.dll`
 - `BotanistsUseX.dll`
 
-These builds target Schedule I `0.4.6f13` IL2CPP and its replacement grow-container behavior API. The legacy mods patched the removed `PotActionBehaviour` type and consequently failed during Harmony initialization.
+These builds target Schedule I `0.4.7f12` IL2CPP and its replacement grow-container behavior API. The legacy mods patched the removed `PotActionBehaviour` type and consequently failed during Harmony initialization.
 
 ## Features
 
@@ -65,7 +65,7 @@ Requirements:
 
 - Windows PowerShell 7 or Windows PowerShell 5.1
 - .NET 6 SDK
-- Schedule I `0.4.6f13` IL2CPP with MelonLoader `0.7.0`
+- Schedule I `0.4.7f12` IL2CPP with MelonLoader `0.7.0`
 
 Build and statically verify all three DLLs:
 
@@ -78,7 +78,7 @@ The script validates exact game API contracts before compiling. Outputs are writ
 
 ## Compatibility status
 
-- Schedule I: `0.4.6f13`
+- Schedule I: `0.4.7f12`
 - Backend: IL2CPP
 - Unity: `2022.3.62f2`
 - MelonLoader: `0.7.0 Open-Beta`
