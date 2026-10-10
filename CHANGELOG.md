@@ -10,6 +10,7 @@ All notable changes to this project are documented here.
 - A combined `BotanistsUseX.dll` build with independent soil-pourer and sprinkler toggles.
 - API and compiled-artifact verification scripts.
 - Reproducible builds using an external `MelonLoaderRoot`.
+- A shared coloured startup banner with build-specific details and creator/original-author credits.
 
 ### Verified
 

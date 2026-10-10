@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using BotanistsUseX.Runtime;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(BotanistUseSprinkler.BotanistUseSprinklerMod), "Botanist Use Sprinkler (Ported)", "2.0.0", "xboxnuker-rgb; original concept by Fortis")]
+[assembly: MelonInfo(typeof(BotanistUseSprinkler.BotanistUseSprinklerMod), "Botanist Use Sprinkler (Ported)", StartupBanner.ModVersion, "xboxnuker-rgb; original concept by Fortis")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 namespace BotanistUseSprinkler;
@@ -19,6 +19,8 @@ public sealed class BotanistUseSprinklerMod : MelonMod
             soilPourerEnabled: false,
             sprinklerEnabled: configuration.Enabled,
             debugEnabled: configuration.Debug);
+
+        StartupBanner.Print("Botanist Use Sprinkler", "Sprinkler");
 
         RuntimeSettings.Info($"Initialized. Enabled: {configuration.Enabled}; Debug: {configuration.Debug}.");
     }

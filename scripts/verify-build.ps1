@@ -13,9 +13,9 @@ $cecilPath = Join-Path $MelonLoaderRoot "net6\Mono.Cecil.dll"
 [void] [System.Reflection.Assembly]::LoadFrom($cecilPath)
 
 $expectations = @(
-    @{ File = "BotanistUseSoilPourer.dll"; Soil = $true; Sprinkler = $false; ConfigType = "BotanistUseSoilPourer.Configuration" },
-    @{ File = "BotanistUseSprinkler.dll"; Soil = $false; Sprinkler = $true; ConfigType = "BotanistUseSprinkler.Configuration" },
-    @{ File = "BotanistsUseX.dll"; Soil = $true; Sprinkler = $true; ConfigType = "BotanistsUseX.Configuration" }
+    @{ File = "BotanistUseSoilPourer.dll"; Soil = $true; Sprinkler = $false; ConfigType = "BotanistUseSoilPourer.Configuration"; EntryType = "BotanistUseSoilPourer.BotanistUseSoilPourerMod"; BannerName = "Botanist Use Soil Pourer"; BannerFeatures = "Soil Pourer" },
+    @{ File = "BotanistUseSprinkler.dll"; Soil = $false; Sprinkler = $true; ConfigType = "BotanistUseSprinkler.Configuration"; EntryType = "BotanistUseSprinkler.BotanistUseSprinklerMod"; BannerName = "Botanist Use Sprinkler"; BannerFeatures = "Sprinkler" },
+    @{ File = "BotanistsUseX.dll"; Soil = $true; Sprinkler = $true; ConfigType = "BotanistsUseX.Configuration"; EntryType = "BotanistsUseX.BotanistsUseXMod"; BannerName = "Botanists Use X"; BannerFeatures = "Soil Pourer + Sprinkler" }
 )
 
 function Assert-Condition([bool] $condition, [string] $message) {
@@ -52,6 +52,25 @@ foreach ($expectation in $expectations) {
 
         $configuration = $types | Where-Object { $_.FullName -ceq $expectation.ConfigType }
         Assert-Condition ($null -ne $configuration) "$($expectation.File) contains its configuration contract"
+
+        $banner = $types | Where-Object { $_.FullName -ceq "BotanistsUseX.Runtime.StartupBanner" }
+        Assert-Condition ($null -ne $banner) "$($expectation.File) contains the shared startup banner"
+
+        $entryType = $types | Where-Object { $_.FullName -ceq $expectation.EntryType }
+        $initializeMethod = $entryType.Methods | Where-Object { $_.Name -ceq "OnInitializeMelon" } | Select-Object -First 1
+        $initializeInstructions = @($initializeMethod.Body.Instructions)
+        $bannerCalls = @($initializeInstructions | Where-Object {
+            $_.OpCode.Code -eq [Mono.Cecil.Cil.Code]::Call -and
+            $_.Operand.FullName -ceq "System.Void BotanistsUseX.Runtime.StartupBanner::Print(System.String,System.String)"
+        })
+        Assert-Condition ($bannerCalls.Count -eq 1) "$($expectation.File) prints its startup banner exactly once"
+
+        $startupStrings = @($initializeInstructions | Where-Object {
+            $_.OpCode.Code -eq [Mono.Cecil.Cil.Code]::Ldstr
+        } | ForEach-Object { [string] $_.Operand })
+        Assert-Condition (
+            $expectation.BannerName -cin $startupStrings -and $expectation.BannerFeatures -cin $startupStrings
+        ) "$($expectation.File) embeds the correct banner identity"
 
         $harmonyTargets = @($types.CustomAttributes | Where-Object { $_.AttributeType.FullName -ceq "HarmonyLib.HarmonyPatch" })
         Assert-Condition ($harmonyTargets.Count -gt 0) "$($expectation.File) contains Harmony patch metadata"

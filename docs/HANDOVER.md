@@ -32,7 +32,7 @@ The port patches only specialized soil and water behavior overrides. It leaves t
 
 Static API verification and builds are performed by `scripts/build-il2cpp.ps1`.
 
-Reverified offline on 2026-10-09 with:
+Reverified offline on 2026-10-10 with:
 
 ```powershell
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot '<game>\MelonLoader' -DotNet '<dotnet-6-sdk>\dotnet.exe'
@@ -42,15 +42,15 @@ Results:
 
 - Game API verification: 27 checks passed.
 - Build: succeeded with 0 warnings and 0 errors.
-- Compiled artifact verification: 27 checks passed.
+- Compiled artifact verification: 36 checks passed, including startup-banner presence, invocation count, and per-build identity.
 - `GameAssembly.dll` SHA-256: `61829050E56CA180D67BE592E4BFE61EC97D2E9573F720D90A54E318A7E4381D`.
 - Generated `Assembly-CSharp.dll` SHA-256: `CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC`.
-- `BotanistUseSoilPourer.dll` SHA-256: `BFAD9337787B667071A8CB65B15A17652EFDB78759C54418B65115EADFC52B76`.
-- `BotanistUseSprinkler.dll` SHA-256: `7D236EB0EA2D1734A513644E7A9CDEE89D9291768D92C050A29E8D5529CFBC68`.
-- `BotanistsUseX.dll` SHA-256: `5B430BF64846B519485B5F58A39071E537B698E28D50CF025BC1540A34B395F8`.
-- `BotanistUseSoilPourer-2.0.0.zip` SHA-256: `3B4820EF9AEE905FAAB9504BD1A4D00E07AE933ECD0DC56B4A3A6F80905DD829`.
-- `BotanistUseSprinkler-2.0.0.zip` SHA-256: `3BF018D84C876339418957951AEDBBA00C9C1ED84910B74F8194D6B6211A73ED`.
-- `BotanistsUseX-2.0.0.zip` SHA-256: `B3CB335AFD7F03186DB256FB952AA4E9DD002E99D01FF7DFC87562A7144C0A57`.
+- `BotanistUseSoilPourer.dll` SHA-256: `8D68A1219DB28001B3F3CA09383FC2DC5D432A1F304C2250278B89FB0013BE2D`.
+- `BotanistUseSprinkler.dll` SHA-256: `B48F958C530C59B08C06E0C551E83A625A69856FE07310796623E2CAB7DA66D2`.
+- `BotanistsUseX.dll` SHA-256: `6C659029F20E2254D7FEB7AE38B1EEAAF5F0CEC31FF0CCDBC53CCC59DA7B25F3`.
+- `BotanistUseSoilPourer-2.0.0.zip` SHA-256: `B5C30FBAFE97744429DBA2DD2A54F72448FA104A1EE65A6414158AE0CBBC6E4D`.
+- `BotanistUseSprinkler-2.0.0.zip` SHA-256: `2CB09F2D2CE6704E67701CB6D13A61A05E48E46297ECD3E0645B2AA4D6CF19A4`.
+- `BotanistsUseX-2.0.0.zip` SHA-256: `5AA63F9E57A73874CC2C108A61E7C643E00704201D6C20C58BCCAC1B8A039323`.
 
 Cpp2IL inspection of the `0.4.7f12` native methods confirmed that the specialized soil and water success methods retain the expected semantics. The grow-container action coroutine still invokes the success method before its normal item decrement/trash path and ends through the networked behavior-disable path.
 

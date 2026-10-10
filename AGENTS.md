@@ -13,7 +13,7 @@ This repository is the canonical project memory for Botanists Use X. Keep it usa
 
 - Never commit game assemblies, generated IL2CPP assemblies, MelonLoader binaries, logs, saves, credentials, local paths, or local toolchains.
 - Keep game references outside the repository and pass their root through `MelonLoaderRoot`.
-- Treat IL2CPP and Mono as separate compatibility targets. The current project supports Schedule I 0.4.6f13 IL2CPP only.
+- Treat IL2CPP and Mono as separate compatibility targets. The current project supports Schedule I 0.4.7f12 IL2CPP only.
 - Resolve Harmony targets by exact type, method name, and parameter signature. A successful compile is not runtime verification.
 - Keep gameplay changes server-authoritative. Clients must receive results through the game's existing networked APIs.
 - Keep the combined and individual builds behaviorally aligned. Shared behavior belongs under `Source/Shared`.

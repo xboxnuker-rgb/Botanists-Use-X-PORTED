@@ -27,6 +27,8 @@ These builds target Schedule I `0.4.7f12` IL2CPP and its replacement grow-contai
 
 Both features make gameplay changes only on the server/host.
 
+Each build prints a coloured `CREATED BY` identity banner during MelonLoader startup, including its build name, version, supported game version, enabled feature set, creator identity, and original Fortis credit.
+
 ## Choose one installation layout
 
 Install either:
