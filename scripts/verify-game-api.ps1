@@ -21,7 +21,9 @@ $requiredReferences = @(
     "Il2CppAssemblies\Il2Cppmscorlib.dll",
     "Il2CppAssemblies\Il2CppFishNet.Runtime.dll",
     "Il2CppAssemblies\UnityEngine.dll",
-    "Il2CppAssemblies\UnityEngine.CoreModule.dll"
+    "Il2CppAssemblies\UnityEngine.CoreModule.dll",
+    "Il2CppAssemblies\UnityEngine.AnimationModule.dll",
+    "Il2CppAssemblies\UnityEngine.ParticleSystemModule.dll"
 )
 
 foreach ($relativePath in $requiredReferences) {
@@ -88,9 +90,6 @@ try {
         }
 
         $namedMethods = @($type.Methods | Where-Object { $_.Name -ceq $methodName })
-        if ($namedMethods.Count -ne 1) {
-            throw "Expected one unambiguous method named $typeName::$methodName for Harmony/direct binding; found $($namedMethods.Count)."
-        }
 
         $matches = @($namedMethods | Where-Object {
             if ($_.Parameters.Count -ne $parameterTypes.Count) {
@@ -137,11 +136,24 @@ try {
     }
 
     $growBehavior = "Il2CppScheduleOne.NPCs.Behaviour.GrowContainerBehaviour"
+    $behavior = "Il2CppScheduleOne.NPCs.Behaviour.Behaviour"
     $soilBehavior = "Il2CppScheduleOne.NPCs.Behaviour.AddSoilToGrowContainerBehaviour"
     $waterBehavior = "Il2CppScheduleOne.NPCs.Behaviour.WaterPotBehaviour"
     $growContainer = "Il2CppScheduleOne.Growing.GrowContainer"
+    $pot = "Il2CppScheduleOne.ObjectScripts.Pot"
+    $potConfiguration = "Il2CppScheduleOne.Management.PotConfiguration"
     $itemInstance = "Il2CppScheduleOne.ItemFramework.ItemInstance"
     $stringArray = "Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStringArray"
+    $avatarEquippable = "Il2CppScheduleOne.AvatarFramework.Equipping.AvatarEquippable"
+    $botanist = "Il2CppScheduleOne.Employees.Botanist"
+    $employee = "Il2CppScheduleOne.Employees.Employee"
+    $botanistConfiguration = "Il2CppScheduleOne.Management.BotanistConfiguration"
+    $networkConnection = "Il2CppFishNet.Connection.NetworkConnection"
+    $playerInventory = "Il2CppScheduleOne.PlayerScripts.PlayerInventory"
+    $interactableObject = "Il2CppScheduleOne.Interaction.InteractableObject"
+    $npc = "Il2CppScheduleOne.NPCs.NPC"
+    $npcMovement = "Il2CppScheduleOne.NPCs.NPCMovement"
+    $vector3 = "UnityEngine.Vector3"
 
     Assert-MissingType "Il2CppScheduleOne.NPCs.Behaviour.PotActionBehaviour"
     Assert-Type $growBehavior "Il2CppScheduleOne.NPCs.Behaviour.Behaviour"
@@ -149,27 +161,73 @@ try {
     Assert-Type $waterBehavior $growBehavior
     Assert-Type "Il2CppScheduleOne.ObjectScripts.SoilPourer" "Il2CppScheduleOne.EntityFramework.GridItem"
     Assert-Type "Il2CppScheduleOne.ObjectScripts.Sprinkler" "Il2CppScheduleOne.EntityFramework.GridItem"
-    Assert-Type "Il2CppScheduleOne.ObjectScripts.Pot" $growContainer
+    Assert-Type $pot $growContainer
 
     Assert-Property $growBehavior "_growContainer" $growContainer
+    Assert-Property $growBehavior "_currentState" "Il2CppScheduleOne.NPCs.Behaviour.GrowContainerBehaviour/EState"
+    Assert-Method $growBehavior "OnActiveTick" "System.Void"
+    Assert-Method $growBehavior "IsRequiredItemInInventory" "System.Boolean" @($growContainer)
+    Assert-Method $growBehavior "PerformAction" "System.Void"
+    Assert-Method $behavior "SetDestination" "System.Void" @($vector3, "System.Boolean", "System.Single")
+    Assert-Property $behavior "Npc" $npc
+    Assert-Property $npc "Movement" $npcMovement
+    Assert-Property $npcMovement "IsMoving" "System.Boolean"
+    Assert-Method $npcMovement "FacePoint" "System.Void" @($vector3, "System.Single")
     Assert-Method $soilBehavior "GetRequiredItemSuitableIDs" $stringArray @($growContainer)
+    Assert-Method $soilBehavior "AreTaskConditionsMetForContainer" "System.Boolean" @($growContainer)
+    Assert-Method $growBehavior "DoesBotanistHaveAccessToRequiredSupplies" "System.Boolean" @($growContainer)
+    Assert-Method $growBehavior "AssignAndEnable" "System.Void" @($growContainer)
+    Assert-Method $soilBehavior "GetActionEquippable" $avatarEquippable
+    Assert-Method $soilBehavior "GetAnimationBool" "System.String"
     Assert-Method $soilBehavior "GetActionDuration" "System.Single"
     Assert-Method $soilBehavior "OnActionSuccess" "System.Void" @($itemInstance)
+    Assert-Method $waterBehavior "GetActionEquippable" $avatarEquippable
+    Assert-Method $waterBehavior "GetAnimationBool" "System.String"
     Assert-Method $waterBehavior "GetActionDuration" "System.Single"
     Assert-Method $waterBehavior "OnActionSuccess" "System.Void" @($itemInstance)
+    Assert-Method $waterBehavior "AreTaskConditionsMetForContainer" "System.Boolean" @($growContainer)
 
     Assert-Property "Il2CppScheduleOne.ObjectScripts.SoilPourer" "SoilID" "System.String"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "GetPots" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ObjectScripts.Pot>'
     Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "SendSoil" "System.Void" @("System.String")
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "SetSoil" "System.Void" @($networkConnection, "System.String")
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "OnSpawnServer" "System.Void" @($networkConnection)
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "RpcLogic___SetSoil_2971853958" "System.Void" @($networkConnection, "System.String")
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "RpcLogic___SendPourSoil_2166136261" "System.Void"
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "RpcLogic___PourSoil_2166136261" "System.Void"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "SetSoilLevel" "System.Void" @("System.Single")
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "FillHovered" "System.Void"
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "FillInteracted" "System.Void"
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.SoilPourer" "HandleInteracted" "System.Void"
+
+    Assert-Property $playerInventory "equippedSlot" "Il2CppScheduleOne.PlayerScripts.HotbarSlot"
+    Assert-Property $playerInventory "EquippedItem" $itemInstance
+    Assert-Property $playerInventory "isAnythingEquipped" "System.Boolean"
+    Assert-Method "Il2CppScheduleOne.ItemFramework.ItemSlot" "ChangeQuantity" "System.Void" @("System.Int32", "System.Boolean")
+    Assert-Method $interactableObject "SetMessage" "System.Void" @("System.String")
+    Assert-Method $interactableObject "SetInteractableState" "System.Void" @("Il2CppScheduleOne.Interaction.InteractableObject/EInteractableState")
+
+    Assert-Method $botanist "UpdateBehaviour" "System.Void"
+    Assert-Method $botanist "IsAnyWorkInProgress" "System.Boolean"
+    Assert-Method $employee "SetIdle" "System.Void" @("System.Boolean")
+    Assert-Property $botanist "Configuration" "Il2CppScheduleOne.Management.EntityConfiguration"
+    Assert-Property $botanist "_addSoilToGrowContainerBehaviour" $soilBehavior
+    Assert-Property $botanistConfiguration "AssignedPots" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ObjectScripts.Pot>'
 
     Assert-Property "Il2CppScheduleOne.ObjectScripts.Sprinkler" "IsSprinkling" "System.Boolean"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.Sprinkler" "CanWater" "System.Boolean"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.Sprinkler" "SendWater" "System.Void"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.Sprinkler" "GetPots" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ObjectScripts.Pot>'
 
+    Assert-Property $pot "potConfiguration" $potConfiguration
+    Assert-Method $pot "PlantSeed_Server" "System.Void" @("System.String", "System.Single")
+    Assert-Method $potConfiguration "GetSelectedSeedIDs" $stringArray
+
     Assert-Method $growContainer "SetSoil" "System.Void" @("Il2CppScheduleOne.ItemFramework.SoilDefinition")
+    Assert-Property $growContainer "CurrentSoil" "Il2CppScheduleOne.ItemFramework.SoilDefinition"
+    Assert-Property $growContainer "IsFullyFilledWithSoil" "System.Boolean"
     Assert-Method $growContainer "SetSoilAmount" "System.Void" @("System.Single")
+    Assert-Method $growContainer "ChangeSoilAmount" "System.Void" @("System.Single")
     Assert-Method $growContainer "SetRemainingSoilUses" "System.Void" @("System.Int32")
     Assert-Method $growContainer "SyncSoilData" "System.Void"
 

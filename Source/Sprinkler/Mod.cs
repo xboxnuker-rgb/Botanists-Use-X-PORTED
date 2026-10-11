@@ -20,7 +20,7 @@ public sealed class BotanistUseSprinklerMod : MelonMod
             sprinklerEnabled: configuration.Enabled,
             debugEnabled: configuration.Debug);
 
-        StartupBanner.Print("Botanist Use Sprinkler", "Sprinkler");
+        StartupBanner.Print("Botanist Use Sprinkler", "Sprinkler", isPortedBuild: true);
 
         RuntimeSettings.Info($"Initialized. Enabled: {configuration.Enabled}; Debug: {configuration.Debug}.");
     }

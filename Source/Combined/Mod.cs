@@ -18,12 +18,20 @@ public sealed class BotanistsUseXMod : MelonMod
         RuntimeSettings.Configure(
             configuration.SoilPourerEnabled,
             configuration.SprinklerEnabled,
-            configuration.Debug);
+            configuration.Debug,
+            configuration.AutoRefillSoilPourers,
+            configuration.SoilPourerCapacity,
+            configuration.AllowManualMultiBagFill);
 
-        StartupBanner.Print("Botanists Use X", "Soil Pourer + Sprinkler");
+        SoilPourerChargeStore.Initialize();
+
+        StartupBanner.Print("Botanists Use X", "Soil Pourer + Sprinkler", isPortedBuild: false);
 
         RuntimeSettings.Info(
             $"Initialized. Soil pourers: {configuration.SoilPourerEnabled}; " +
+            $"automatic refill: {configuration.AutoRefillSoilPourers}; " +
+            $"capacity: {RuntimeSettings.SoilPourerCapacity}; " +
+            $"manual multi-bag fill: {configuration.AllowManualMultiBagFill}; " +
             $"Sprinklers: {configuration.SprinklerEnabled}; Debug: {configuration.Debug}.");
     }
 }
@@ -31,6 +39,15 @@ internal sealed class Configuration
 {
     [JsonPropertyName("soilPourerEnabled")]
     public bool SoilPourerEnabled { get; set; } = true;
+
+    [JsonPropertyName("autoRefillSoilPourers")]
+    public bool AutoRefillSoilPourers { get; set; } = true;
+
+    [JsonPropertyName("soilPourerCapacity")]
+    public int SoilPourerCapacity { get; set; } = 2;
+
+    [JsonPropertyName("allowManualMultiBagFill")]
+    public bool AllowManualMultiBagFill { get; set; } = true;
 
     [JsonPropertyName("sprinklerEnabled")]
     public bool SprinklerEnabled { get; set; } = true;

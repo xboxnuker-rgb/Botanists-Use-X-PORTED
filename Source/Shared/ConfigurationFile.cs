@@ -32,6 +32,9 @@ internal static class ConfigurationFile
             T? loaded = JsonSerializer.Deserialize<T>(json, SerializerOptions);
             if (loaded is not null)
             {
+                // Rewrite successfully loaded files so newly added options appear with their
+                // default values instead of remaining invisible until the user recreates them.
+                Save(filePath, loaded);
                 return loaded;
             }
 

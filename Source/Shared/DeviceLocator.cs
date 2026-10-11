@@ -1,4 +1,3 @@
-using Il2CppScheduleOne.EntityFramework;
 using Il2CppScheduleOne.ObjectScripts;
 using Il2CppScheduleOne.Tiles;
 
@@ -6,97 +5,181 @@ namespace BotanistsUseX.Runtime;
 
 internal static class DeviceLocator
 {
-    private const int SearchRadius = 3;
+    private const float CacheRefreshSeconds = 2f;
+    private const float FaultRetrySeconds = 10f;
+    private static readonly Dictionary<IntPtr, float> FaultedDevices = new();
 
 #if FEATURE_SOIL
+    private static readonly Dictionary<IntPtr, SoilPourer> SoilPourersByPot = new();
+    private static readonly Dictionary<PotKey, SoilPourer> SoilPourersByCoordinate = new();
+    private static float _nextSoilRefresh;
+
     internal static SoilPourer? FindSoilPourer(Pot pot)
     {
-        foreach (Tile tile in EnumerateCardinalTiles(pot))
+        if (UnityEngine.Time.realtimeSinceStartup >= _nextSoilRefresh || SoilPourersByPot.Count == 0)
         {
-            foreach (GridItem occupant in tile.BuildableOccupants)
-            {
-                if (occupant is null || !occupant.TryGetComponent(out SoilPourer pourer) || pourer is null)
-                {
-                    continue;
-                }
-
-                if (ContainsPot(pourer.GetPots(), pot))
-                {
-                    return pourer;
-                }
-            }
+            RefreshSoilPourers();
         }
 
-        return null;
-    }
-#endif
-
-#if FEATURE_SPRINKLER
-    internal static Sprinkler? FindUsableSprinkler(Pot pot)
-    {
-        foreach (Tile tile in EnumerateCardinalTiles(pot))
+        if (SoilPourersByPot.TryGetValue(pot.Pointer, out SoilPourer? pourer) && IsUsable(pourer))
         {
-            foreach (GridItem occupant in tile.BuildableOccupants)
-            {
-                if (occupant is null || !occupant.TryGetComponent(out Sprinkler sprinkler) || sprinkler is null)
-                {
-                    continue;
-                }
-
-                if (ContainsPot(sprinkler.GetPots(), pot) && (sprinkler.IsSprinkling || sprinkler.CanWater()))
-                {
-                    return sprinkler;
-                }
-            }
+            return pourer;
         }
 
-        return null;
-    }
-#endif
-
-    private static IEnumerable<Tile> EnumerateCardinalTiles(Pot pot)
-    {
-        Coordinate origin = new(pot._originCoordinate);
-
-        for (int distance = 1; distance <= SearchRadius; distance++)
-        {
-            Coordinate[] coordinates =
-            {
-                new(origin.x + distance, origin.y),
-                new(origin.x - distance, origin.y),
-                new(origin.x, origin.y + distance),
-                new(origin.x, origin.y - distance),
-            };
-
-            foreach (Coordinate coordinate in coordinates)
-            {
-                Tile tile = pot.OwnerGrid.GetTile(coordinate);
-                if (tile is not null)
-                {
-                    yield return tile;
-                }
-            }
-        }
+        return SoilPourersByCoordinate.TryGetValue(PotKey.From(pot), out pourer) && IsUsable(pourer)
+            ? pourer
+            : null;
     }
 
-    private static bool ContainsPot(Il2CppSystem.Collections.Generic.List<Pot> pots, Pot target)
+    private static void RefreshSoilPourers()
     {
-        Coordinate targetCoordinate = new(target._originCoordinate);
+        _nextSoilRefresh = UnityEngine.Time.realtimeSinceStartup + CacheRefreshSeconds;
+        SoilPourersByPot.Clear();
+        SoilPourersByCoordinate.Clear();
 
-        foreach (Pot pot in pots)
+        foreach (SoilPourer pourer in UnityEngine.Object.FindObjectsOfType<SoilPourer>())
         {
-            if (pot is null)
+            if (!IsUsable(pourer) || IsCoolingDown(pourer.Pointer))
             {
                 continue;
             }
 
-            Coordinate coordinate = new(pot._originCoordinate);
-            if (coordinate.x == targetCoordinate.x && coordinate.y == targetCoordinate.y)
+            try
             {
-                return true;
+                foreach (Pot pot in pourer.GetPots())
+                {
+                    if (pot is null)
+                    {
+                        continue;
+                    }
+
+                    SoilPourersByPot.TryAdd(pot.Pointer, pourer);
+                    SoilPourersByCoordinate.TryAdd(PotKey.From(pot), pourer);
+                }
+
+                FaultedDevices.Remove(pourer.Pointer);
+            }
+            catch (Exception exception)
+            {
+                RecordFault(pourer.Pointer, "soil pourer", exception);
             }
         }
+    }
+#endif
 
-        return false;
+#if FEATURE_SPRINKLER
+    private static readonly Dictionary<IntPtr, Sprinkler> SprinklersByPot = new();
+    private static readonly Dictionary<PotKey, Sprinkler> SprinklersByCoordinate = new();
+    private static float _nextSprinklerRefresh;
+
+    internal static Sprinkler? FindUsableSprinkler(Pot pot)
+    {
+        if (UnityEngine.Time.realtimeSinceStartup >= _nextSprinklerRefresh || SprinklersByPot.Count == 0)
+        {
+            RefreshSprinklers();
+        }
+
+        Sprinkler? sprinkler = null;
+        if (!SprinklersByPot.TryGetValue(pot.Pointer, out sprinkler))
+        {
+            SprinklersByCoordinate.TryGetValue(PotKey.From(pot), out sprinkler);
+        }
+
+        if (!IsUsable(sprinkler))
+        {
+            return null;
+        }
+
+        Sprinkler activeSprinkler = sprinkler!;
+        try
+        {
+            return activeSprinkler.IsSprinkling || activeSprinkler.CanWater() ? activeSprinkler : null;
+        }
+        catch (Exception exception)
+        {
+            RecordFault(activeSprinkler.Pointer, "sprinkler", exception);
+            return null;
+        }
+    }
+
+    private static void RefreshSprinklers()
+    {
+        _nextSprinklerRefresh = UnityEngine.Time.realtimeSinceStartup + CacheRefreshSeconds;
+        SprinklersByPot.Clear();
+        SprinklersByCoordinate.Clear();
+
+        foreach (Sprinkler sprinkler in UnityEngine.Object.FindObjectsOfType<Sprinkler>())
+        {
+            if (!IsUsable(sprinkler) || IsCoolingDown(sprinkler.Pointer))
+            {
+                continue;
+            }
+
+            try
+            {
+                foreach (Pot pot in sprinkler.GetPots())
+                {
+                    if (pot is null)
+                    {
+                        continue;
+                    }
+
+                    SprinklersByPot.TryAdd(pot.Pointer, sprinkler);
+                    SprinklersByCoordinate.TryAdd(PotKey.From(pot), sprinkler);
+                }
+
+                FaultedDevices.Remove(sprinkler.Pointer);
+            }
+            catch (Exception exception)
+            {
+                RecordFault(sprinkler.Pointer, "sprinkler", exception);
+            }
+        }
+    }
+#endif
+
+    private static bool IsUsable(Il2CppScheduleOne.EntityFramework.BuildableItem? device) =>
+        device is not null && device.Initialized && !device.IsDestroyed;
+
+    private static bool IsCoolingDown(IntPtr pointer) =>
+        FaultedDevices.TryGetValue(pointer, out float retryAt) &&
+        UnityEngine.Time.realtimeSinceStartup < retryAt;
+
+    private static void RecordFault(IntPtr pointer, string deviceName, Exception exception)
+    {
+        bool firstFault = !FaultedDevices.ContainsKey(pointer);
+        FaultedDevices[pointer] = UnityEngine.Time.realtimeSinceStartup + FaultRetrySeconds;
+
+        if (firstFault)
+        {
+            RuntimeSettings.Warning(
+                $"Ignored an uninitialized or invalid {deviceName} while resolving an attached device: {exception.Message}");
+        }
+    }
+
+    private readonly struct PotKey : IEquatable<PotKey>
+    {
+        private PotKey(IntPtr grid, int x, int y)
+        {
+            Grid = grid;
+            X = x;
+            Y = y;
+        }
+
+        private IntPtr Grid { get; }
+        private int X { get; }
+        private int Y { get; }
+
+        internal static PotKey From(Pot pot)
+        {
+            Coordinate coordinate = new(pot._originCoordinate);
+            return new PotKey(pot.OwnerGrid?.Pointer ?? IntPtr.Zero, coordinate.x, coordinate.y);
+        }
+
+        public bool Equals(PotKey other) => Grid == other.Grid && X == other.X && Y == other.Y;
+
+        public override bool Equals(object? obj) => obj is PotKey other && Equals(other);
+
+        public override int GetHashCode() => HashCode.Combine(Grid, X, Y);
     }
 }

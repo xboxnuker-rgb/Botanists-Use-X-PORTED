@@ -4,7 +4,9 @@ param(
     [string] $MelonLoaderRoot,
 
     [Parameter(Mandatory = $true)]
-    [string] $OutputDirectory
+    [string] $OutputDirectory,
+
+    [string[]] $Files = @()
 )
 
 $ErrorActionPreference = "Stop"
@@ -13,10 +15,19 @@ $cecilPath = Join-Path $MelonLoaderRoot "net6\Mono.Cecil.dll"
 [void] [System.Reflection.Assembly]::LoadFrom($cecilPath)
 
 $expectations = @(
-    @{ File = "BotanistUseSoilPourer.dll"; Soil = $true; Sprinkler = $false; ConfigType = "BotanistUseSoilPourer.Configuration"; EntryType = "BotanistUseSoilPourer.BotanistUseSoilPourerMod"; BannerName = "Botanist Use Soil Pourer"; BannerFeatures = "Soil Pourer" },
-    @{ File = "BotanistUseSprinkler.dll"; Soil = $false; Sprinkler = $true; ConfigType = "BotanistUseSprinkler.Configuration"; EntryType = "BotanistUseSprinkler.BotanistUseSprinklerMod"; BannerName = "Botanist Use Sprinkler"; BannerFeatures = "Sprinkler" },
-    @{ File = "BotanistsUseX.dll"; Soil = $true; Sprinkler = $true; ConfigType = "BotanistsUseX.Configuration"; EntryType = "BotanistsUseX.BotanistsUseXMod"; BannerName = "Botanists Use X"; BannerFeatures = "Soil Pourer + Sprinkler" }
+    @{ File = "BotanistUseSoilPourer.dll"; Soil = $true; Sprinkler = $false; ConfigType = "BotanistUseSoilPourer.Configuration"; EntryType = "BotanistUseSoilPourer.BotanistUseSoilPourerMod"; BannerName = "Botanist Use Soil Pourer"; BannerFeatures = "Soil Pourer"; Ported = $true },
+    @{ File = "BotanistUseSprinkler.dll"; Soil = $false; Sprinkler = $true; ConfigType = "BotanistUseSprinkler.Configuration"; EntryType = "BotanistUseSprinkler.BotanistUseSprinklerMod"; BannerName = "Botanist Use Sprinkler"; BannerFeatures = "Sprinkler"; Ported = $true },
+    @{ File = "BotanistsUseX.dll"; Soil = $true; Sprinkler = $true; ConfigType = "BotanistsUseX.Configuration"; EntryType = "BotanistsUseX.BotanistsUseXMod"; BannerName = "Botanists Use X"; BannerFeatures = "Soil Pourer + Sprinkler"; Ported = $false }
 )
+
+if ($Files.Count -gt 0) {
+    $unknownFiles = @($Files | Where-Object { $_ -notin $expectations.File })
+    if ($unknownFiles.Count -gt 0) {
+        throw "Unknown build output requested for verification: $($unknownFiles -join ', ')"
+    }
+
+    $expectations = @($expectations | Where-Object { $_.File -in $Files })
+}
 
 function Assert-Condition([bool] $condition, [string] $message) {
     if (-not $condition) {
@@ -53,6 +64,13 @@ foreach ($expectation in $expectations) {
         $configuration = $types | Where-Object { $_.FullName -ceq $expectation.ConfigType }
         Assert-Condition ($null -ne $configuration) "$($expectation.File) contains its configuration contract"
 
+        if ($expectation.Soil) {
+            $configurationProperties = @($configuration.Properties | ForEach-Object { $_.Name })
+            foreach ($propertyName in @("AutoRefillSoilPourers", "SoilPourerCapacity", "AllowManualMultiBagFill")) {
+                Assert-Condition ($propertyName -in $configurationProperties) "$($expectation.File) exposes configurable $propertyName"
+            }
+        }
+
         $banner = $types | Where-Object { $_.FullName -ceq "BotanistsUseX.Runtime.StartupBanner" }
         Assert-Condition ($null -ne $banner) "$($expectation.File) contains the shared startup banner"
 
@@ -61,9 +79,19 @@ foreach ($expectation in $expectations) {
         $initializeInstructions = @($initializeMethod.Body.Instructions)
         $bannerCalls = @($initializeInstructions | Where-Object {
             $_.OpCode.Code -eq [Mono.Cecil.Cil.Code]::Call -and
-            $_.Operand.FullName -ceq "System.Void BotanistsUseX.Runtime.StartupBanner::Print(System.String,System.String)"
+            $_.Operand.FullName -ceq "System.Void BotanistsUseX.Runtime.StartupBanner::Print(System.String,System.String,System.Boolean)"
         })
         Assert-Condition ($bannerCalls.Count -eq 1) "$($expectation.File) prints its startup banner exactly once"
+
+        $bannerCallIndex = $initializeInstructions.IndexOf($bannerCalls[0])
+        $portedArgument = $initializeInstructions[$bannerCallIndex - 1].OpCode.Code
+        $expectedPortedArgument = if ($expectation.Ported) {
+            [Mono.Cecil.Cil.Code]::Ldc_I4_1
+        }
+        else {
+            [Mono.Cecil.Cil.Code]::Ldc_I4_0
+        }
+        Assert-Condition ($portedArgument -eq $expectedPortedArgument) "$($expectation.File) uses the correct PORTED BY/CREATED BY banner mode"
 
         $startupStrings = @($initializeInstructions | Where-Object {
             $_.OpCode.Code -eq [Mono.Cecil.Cil.Code]::Ldstr
@@ -84,13 +112,28 @@ foreach ($expectation in $expectations) {
         $expectedTargets = @()
         if ($expectation.Soil) {
             $expectedTargets += @(
+                "Il2CppScheduleOne.ObjectScripts.SoilPourer::FillHovered",
+                "Il2CppScheduleOne.ObjectScripts.SoilPourer::FillInteracted",
+                "Il2CppScheduleOne.ObjectScripts.SoilPourer::HandleInteracted",
+                "Il2CppScheduleOne.ObjectScripts.SoilPourer::RpcLogic___SetSoil_2971853958",
+                "Il2CppScheduleOne.ObjectScripts.SoilPourer::OnSpawnServer",
+                "Il2CppScheduleOne.ObjectScripts.SoilPourer::RpcLogic___SendPourSoil_2166136261",
+                "Il2CppScheduleOne.ObjectScripts.SoilPourer::RpcLogic___PourSoil_2166136261",
+                "Il2CppScheduleOne.Employees.Botanist::UpdateBehaviour",
+                "Il2CppScheduleOne.NPCs.Behaviour.GrowContainerBehaviour::OnActiveTick",
+                "Il2CppScheduleOne.NPCs.Behaviour.AddSoilToGrowContainerBehaviour::AreTaskConditionsMetForContainer",
                 "Il2CppScheduleOne.NPCs.Behaviour.AddSoilToGrowContainerBehaviour::GetRequiredItemSuitableIDs",
+                "Il2CppScheduleOne.NPCs.Behaviour.AddSoilToGrowContainerBehaviour::GetActionEquippable",
+                "Il2CppScheduleOne.NPCs.Behaviour.AddSoilToGrowContainerBehaviour::GetAnimationBool",
                 "Il2CppScheduleOne.NPCs.Behaviour.AddSoilToGrowContainerBehaviour::GetActionDuration",
                 "Il2CppScheduleOne.NPCs.Behaviour.AddSoilToGrowContainerBehaviour::OnActionSuccess"
             )
         }
         if ($expectation.Sprinkler) {
             $expectedTargets += @(
+                "Il2CppScheduleOne.NPCs.Behaviour.WaterPotBehaviour::AreTaskConditionsMetForContainer",
+                "Il2CppScheduleOne.NPCs.Behaviour.WaterPotBehaviour::GetActionEquippable",
+                "Il2CppScheduleOne.NPCs.Behaviour.WaterPotBehaviour::GetAnimationBool",
                 "Il2CppScheduleOne.NPCs.Behaviour.WaterPotBehaviour::GetActionDuration",
                 "Il2CppScheduleOne.NPCs.Behaviour.WaterPotBehaviour::OnActionSuccess"
             )
