@@ -1,211 +1,93 @@
-# Nexus Upload Drafts
+# Nexus Mods publication drafts
 
-These drafts are ready for copy editing and image insertion. They have not been published. Version `2.0.0` targets Schedule I `0.4.7f12` IL2CPP with MelonLoader `0.7.0 Open-Beta`.
+This directory follows the same release-page pattern used by Improved Packagers PORTED: a polished rich-text description plus a field-by-field upload sheet for every public listing.
 
-## Shared release notes
+Nothing here has been published.
 
-### Requirements
+## Listing map
 
-- Schedule I `0.4.7f12` on the IL2CPP branch
-- MelonLoader `0.7.0 Open-Beta`
-- The same mod DLL and version on every multiplayer participant
+| Planned listing | Full description | Upload form and checklist |
+| --- | --- | --- |
+| Botanists Use X — combined mod | [Combined description](nexus/combined-description.md) | [Combined upload sheet](nexus/combined-upload.md) |
+| Botanist Use Soil Pourer PORTED | [Soil Pourer description](nexus/soil-pourer-description.md) | [Soil Pourer upload sheet](nexus/soil-pourer-upload.md) |
+| Botanist Use Sprinkler PORTED | [Sprinkler description](nexus/sprinkler-description.md) | [Sprinkler upload sheet](nexus/sprinkler-upload.md) |
 
-### Installation
+## Shared presentation style
 
-1. Install MelonLoader for Schedule I.
-2. Remove the old Fortis DLL for the feature being installed.
-3. Copy the chosen DLL into the game's `Mods` folder.
-4. Do not install `BotanistsUseX.dll` alongside either individual DLL.
+- Open with a blue largest heading matching the GSVS startup banner.
+- Put a green **WORKS WITH THE SPECIAL CUSTOMERS UPDATE — SCHEDULE I 0.4.7f12** callout immediately below it.
+- Follow with one short identity/credit callout before the longer introduction.
+- Use `At a glance`, `Requirements`, `Installation`, feature/usage, `Compatibility and testing`, `Troubleshooting`, credits/disclosure, and changelog sections in that order.
+- Use restrained blue and green accents while leaving body text in the Nexus default colour.
+- Separate major sections with horizontal rules.
+- Put the exact original-author credit near the top and again in the credits section.
+- Use the unedited supplied screenshots; do not mark them as generated media.
+- Select Nexus's **AI-Generated Content** disclosure tag because Codex assisted code and documentation.
 
-Configuration files are generated under `UserData` on first launch. To uninstall, remove the DLL from `Mods`; saved configuration and soil-pourer charge data may be removed separately if a completely clean uninstall is wanted.
+## Shared requirements
 
-### Support request template
+- Schedule I `0.4.7f12` on the IL2CPP/main branch.
+- MelonLoader `0.7.0 Open-Beta`.
+- The same chosen DLL layout and version for every multiplayer participant.
+- No Mod Manager dependency is claimed; configuration is stored in JSON under `UserData`.
 
-Please include the exact game version, mod version, whether you were host or client, the installed Botanists Use X DLL layout, reproduction steps, and the relevant MelonLoader log. Do not mix the combined build with an individual build.
+## Permission checkpoint — required before publication
 
----
+The original [BotanistUseSoilPourers Nexus page](https://www.nexusmods.com/schedule1/mods/1091) and [BotanistUseSprinkler Nexus page](https://www.nexusmods.com/schedule1/mods/1080) currently reserve modification and redistribution permission. Their public GitHub repositories do not declare a software licence.
 
-## Listing 1 — Botanist Use Soil Pourer PORTED
+Before publishing either port or the combined listing, the owner must do one of the following and retain the evidence:
 
-### Suggested title
+1. Obtain explicit permission from Fortis / Fortis202 for the planned Nexus uploads; or
+2. Obtain written confirmation from Nexus Mods that this independently maintained, separately branded implementation may be listed despite the original-page restrictions.
 
-`Botanist Use Soil Pourer - IL2CPP Port`
+Do not describe the original projects as MIT licensed. Do not claim endorsement. Do not publish while this checkpoint remains unresolved.
 
-### One-line summary
+This repository's `LICENSE.txt` applies to new repository code and documentation only; [NOTICE.txt](../NOTICE.txt) records the third-party attribution boundary.
 
-Botanists use, refill, and prepare multi-bag soil pourers on Schedule I 0.4.7f12, with synchronized multiplayer support.
+## Shared image inventory
 
-### Main file
+Upload only the images relevant to each listing:
 
-`BotanistUseSoilPourer-2.0.0.zip`
+1. `docs/images/botanist-equipment-room.png`
+   **Caption:** Botanists working among linked pots and grow equipment.
+2. `docs/images/botanist-device-workflow.png`
+   **Caption:** A botanist completing a grow task beside linked equipment.
+3. `docs/images/soil-pourer-half-full.png`
+   **Caption:** Multi-bag soil pourer showing one of two stored charges.
+4. `docs/images/soil-pourer-empty.png`
+   **Caption:** Empty soil pourer ready to accept a new soil bag.
+5. `docs/images/mods-folder-location.png`
+   **Caption:** Open the Schedule I installation directory and place the chosen DLL in `Mods`.
 
-SHA-256: `40FF53B1933359F41D16F66F514D526BB0DF580A74914FDCF58FC6CB7E91FA78`
+Recommended primary images:
 
-### Suggested description
+- Combined: `botanist-equipment-room.png`.
+- Soil Pourer: `soil-pourer-half-full.png`.
+- Sprinkler: wait for a dedicated small/large sprinkler activation image before publication.
 
-Botanist Use Soil Pourer is back on the current Schedule I IL2CPP build.
+Branded header art for all three listings and a dedicated sprinkler action screenshot still await owner prompts.
 
-This clean port replaces the removed legacy botanist action patches with the current grow-container behavior system. Botanists can use linked soil pourers, arrive with the configured seed, dispense soil, plant immediately, and refill pourers during idle work so the next planting cycle is prepared.
+## Shared disclosure and form choices
 
-The port also expands soil pourers beyond the original one-bag behavior. Capacity is configurable from 1 to 8 bags and defaults to 2. Players and botanists can top up a partly filled pourer with matching soil, its visible fill level and prompt show the stored amount, and each dispense consumes one charge instead of emptying the whole device.
+- Game: Schedule I.
+- Category: Employees.
+- Suggested tags: Gameplay, Bug Fixes, Quality of Life, Utilities for Players, AI-Generated Content.
+- Translation: no.
+- Adult content: no.
+- Paid content: no.
+- Community tagging: enabled.
+- Download mirrors: empty; Nexus hosts the verified main file and GitHub remains the source/issue reference.
+- Donation Points: opt out unless/until original-author permission and any desired arrangement are explicit.
+- Do not select any event whose rules exclude AI-assisted code.
 
-Features:
+## Shared final checklist
 
-- Current Schedule I 0.4.7f12 IL2CPP compatibility
-- Configurable 1–8 bag capacity
-- Manual and botanist multi-bag refilling
-- One-charge-at-a-time dispensing
-- Proportional fill visuals and charge prompts
-- Botanists bring the selected seed and plant immediately
-- Refill-only trips navigate to the pourer
-- Persistent charge state
-- Host-authoritative multiplayer synchronization, including existing state for joining clients
-- Blue GSVS `PORTED BY` startup banner
-
-Multiplayer note: every participant should install the same DLL and version. The host controls capacity and charge state for the session.
-
-Original mod concept and legacy implementation by Fortis. Port maintained by GSVS UK ACM / xboxnuker-rgb.
-
-Source: https://github.com/xboxnuker-rgb/Botanists-Use-X-PORTED
-
-### Suggested tags
-
-`Gameplay`, `Quality of Life`, `Utilities`, `Multiplayer`, `MelonLoader`
-
----
-
-## Listing 2 — Botanist Use Sprinkler PORTED
-
-### Suggested title
-
-`Botanist Use Sprinkler - IL2CPP Port`
-
-### One-line summary
-
-Botanists activate linked small and large sprinklers instead of standing at pots and hand watering them.
-
-### Main file
-
-`BotanistUseSprinkler-2.0.0.zip`
-
-SHA-256: `3C1E7F374874153AF3F883F1EC44A8AB469DAE1E0F341114733866D98E66EB83`
-
-### Suggested description
-
-Botanist Use Sprinkler is back on the current Schedule I IL2CPP build.
-
-This clean port replaces the removed legacy botanist action patches with the current grow-container behavior system. When a linked sprinkler is ready, the botanist activates it instead of applying the normal hand-watering result. Both small and large sprinklers are supported, and the worker walks away as soon as the device is activated instead of remaining at the pot with a watering-can animation.
-
-Features:
-
-- Current Schedule I 0.4.7f12 IL2CPP compatibility
-- Small and large sprinkler support
-- Uses each sprinkler's authoritative linked-pot list
-- Immediate worker release after activation
-- Duplicate watering-task suppression while a sprinkler is running
-- Normal hand-watering fallback when no linked sprinkler is ready
-- Server-authoritative gameplay behavior
-- Blue GSVS `PORTED BY` startup banner
-
-For consistent multiplayer support, every participant should use the same DLL and version.
-
-Original mod concept and legacy implementation by Fortis. Port maintained by GSVS UK ACM / xboxnuker-rgb.
-
-Source: https://github.com/xboxnuker-rgb/Botanists-Use-X-PORTED
-
-### Suggested tags
-
-`Gameplay`, `Quality of Life`, `Utilities`, `MelonLoader`
-
----
-
-## Listing 3 — Botanists Use X
-
-### Suggested title
-
-`Botanists Use X - Soil Pourers and Sprinklers`
-
-### One-line summary
-
-One configurable DLL for botanist soil-pourer and sprinkler automation, including multi-bag pourers and multiplayer synchronization.
-
-### Main file
-
-`BotanistsUseX-2.0.0.zip`
-
-SHA-256: `A6EF1669B265C1E57A5E39D0ED7CDF5C152FA6CEC8C7A7FDB119684EC9D4A418`
-
-### Suggested description
-
-Botanists Use X combines the modern Botanist Use Soil Pourer and Botanist Use Sprinkler ports in one configurable DLL.
-
-Enable either feature or both. Botanists can prepare and use multi-bag soil pourers, bring the configured seed and plant it immediately, refill pourers during idle work, and activate linked small or large sprinklers before walking away to their next task.
-
-Soil-pourer capacity is configurable from 1 to 8 bags and defaults to 2. Stored charges, prompts, fill visuals, remote interactions, staged dispensing, and joining-client state are synchronized from the host in multiplayer.
-
-Features:
-
-- Independent soil-pourer and sprinkler toggles
-- Configurable automatic pourer refill
-- Configurable 1–8 bag pourer capacity
-- Optional manual multi-bag filling
-- One-charge-at-a-time dispensing and proportional visuals
-- Immediate soil-to-seed planting workflow
-- Small and large sprinkler support
-- Immediate worker release after sprinkler activation
-- Host-authoritative multiplayer state synchronization
-- Blue GSVS `CREATED BY` startup banner
-
-Important: install this combined DLL by itself. Do not install it alongside either individual Botanist Use DLL. Every multiplayer participant should use the same DLL and version.
-
-Based on the original Botanist Use Soil Pourer and Botanist Use Sprinkler concepts and legacy implementations by Fortis. Combined mod created and maintained by GSVS UK ACM / xboxnuker-rgb.
-
-Source: https://github.com/xboxnuker-rgb/Botanists-Use-X-PORTED
-
-### Suggested tags
-
-`Gameplay`, `Quality of Life`, `Utilities`, `Multiplayer`, `MelonLoader`
-
----
-
-## Version 2.0.0 changelog for Nexus
-
-- Ported both legacy mods to Schedule I 0.4.7f12 IL2CPP.
-- Added the combined build with independent feature toggles.
-- Added configurable multi-bag soil pourers, staged dispensing, manual/botanist top-ups, persistence, and multiplayer synchronization.
-- Made botanists carry and immediately plant the configured seed after using a pourer.
-- Added small and large sprinkler activation with immediate worker release.
-- Added build/API verification and blue GSVS startup identity banners.
-
-## Image assets — awaiting owner prompts
-
-The owner supplied these unedited gameplay and installation screenshots, now stored under `docs/images`:
-
-- `soil-pourer-empty.png` — empty pourer with the native `Insert soil` prompt.
-- `soil-pourer-half-full.png` — the modded `Insert soil (1/2)` prompt and half-fill state.
-- `botanist-equipment-room.png` — wider botanist and linked-equipment scene.
-- `botanist-device-workflow.png` — close gameplay view of a botanist working beside linked equipment.
-- `mods-folder-location.png` — Windows Explorer view of the Schedule I `Mods` path.
-
-Recommended current use:
-
-- Soil Pourer gallery: empty and half-full comparison.
-- Combined-mod gallery: equipment-room and device-workflow shots.
-- Shared installation section: Mods-folder screenshot.
-
-Dedicated branded header/key art and a clearer sprinkler-specific action shot still await owner prompts:
-
-1. Combined-mod Nexus header/key art.
-2. Soil-pourer listing header/key art.
-3. Sprinkler listing header/key art.
-4. In-game full `2/2` pourer close-up, if a matching comparison shot is wanted.
-5. In-game small/large sprinkler comparison or activation shot.
-6. Optional blue GSVS startup-banner screenshot.
-
-## Publication checklist
-
-- Add owner-approved images and thumbnails.
-- Confirm the selected Nexus category and permissions text.
-- Attach the matching `2.0.0` archive to each listing.
-- Recheck archive hashes against `docs/HANDOVER.md`.
-- Publish only after explicit owner approval.
+- [ ] Resolve and document the permission checkpoint.
+- [ ] Add the owner-approved branded header and listing thumbnail.
+- [ ] Add a dedicated sprinkler screenshot to the sprinkler listing.
+- [ ] Upload the named ZIP from `artifacts`, never GitHub's source-code archive.
+- [ ] Confirm the ZIP preview includes the DLL, `README.md`, `LICENSE.txt`, and `NOTICE.txt`.
+- [ ] Apply the rich-text formatting and image order from the listing-specific upload sheet.
+- [ ] Verify the visible original-author and maintainer credit.
+- [ ] Recheck the uploaded file's SHA-256 against `docs/HANDOVER.md`.
+- [ ] Save and preview each page; leave final **Publish** approval to the owner.

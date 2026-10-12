@@ -13,6 +13,7 @@ All notable changes to this project are documented here.
 - Host-authoritative multiplayer synchronization for capacity, charge state, remote refills, dispensing, and clients joining an existing session.
 - A shared blue-shaded `GSVS` startup banner with build-specific `PORTED BY`/`CREATED BY` wording and original-author credits.
 - API and compiled-artifact verification scripts and reproducible builds using an external `MelonLoaderRoot`.
+- GitHub release notes, three Nexus-ready description/upload sheets, supplied gameplay screenshots, and an explicit attribution notice.
 
 ### Changed
 

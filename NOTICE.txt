@@ -1,0 +1,22 @@
+Botanists Use X attribution notice
+
+The original BotanistUseSoilPourers and BotanistUseSprinkler projects were
+created by Fortis / Fortis202:
+
+https://github.com/fortiiis/BotanistUseSoilPourers
+https://www.nexusmods.com/schedule1/mods/1091
+https://github.com/fortiiis/BotanistUseSprinkler
+https://www.nexusmods.com/schedule1/mods/1080
+
+Botanists Use X is an independently maintained implementation for the current
+Schedule I IL2CPP grow-container API. It is not an official Fortis release.
+No original visual, audio, or branding assets are included.
+
+The MIT licence in LICENSE.txt applies to original code and documentation in
+this repository. It does not grant or alter rights in third-party projects.
+The original Nexus pages currently reserve modification and redistribution
+permission; obtain any permission required by the intended distribution
+platform before publishing a compatibility port there.
+
+Current compatibility implementation and maintenance:
+GSVS UK ACM / xboxnuker-rgb

@@ -48,6 +48,7 @@ foreach ($package in $packages) {
     Copy-Item -LiteralPath (Join-Path $buildRoot $package.Dll) -Destination $stagePath
     Copy-Item -LiteralPath (Join-Path $repositoryRoot "README.md") -Destination $stagePath
     Copy-Item -LiteralPath (Join-Path $repositoryRoot "LICENSE.txt") -Destination $stagePath
+    Copy-Item -LiteralPath (Join-Path $repositoryRoot "NOTICE.txt") -Destination $stagePath
 
     $archivePath = Join-Path $artifactRoot "$($package.Name)-$Version.zip"
     Assert-ArtifactChild $archivePath

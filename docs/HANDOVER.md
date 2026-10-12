@@ -54,7 +54,7 @@ The ports use the current grow-container behavior system, including `GrowContain
 
 ## Verification record
 
-The final source candidate was built and statically verified on 2026-10-11 with:
+The final source candidate was rebuilt, packaged, and statically verified on 2026-10-12 with:
 
 ```powershell
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot '<game>\MelonLoader' -DotNet '<dotnet-6-sdk>\dotnet.exe'
@@ -67,15 +67,15 @@ Results before final documentation packaging:
 - Compiled artifact verification: 45 checks passed.
 - `GameAssembly.dll` SHA-256: `61829050E56CA180D67BE592E4BFE61EC97D2E9573F720D90A54E318A7E4381D`.
 - Generated `Assembly-CSharp.dll` SHA-256: `CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC`.
-- `BotanistUseSoilPourer.dll` SHA-256: `15C451891FC56220ED543AEADBA1040AFF9ADEE71FDC635D57A0085F0B11E7B7`.
-- `BotanistUseSprinkler.dll` SHA-256: `6D192555FEE0A7A515967546B079F3D73D4693B163CD320263FD3AC2DFECBF63`.
-- `BotanistsUseX.dll` SHA-256: `619E685B538BCA1177A32ECD66201020931B12F3BEA8F1693FCBC3A083C0C99C`.
+- `BotanistUseSoilPourer.dll` SHA-256: `8C16889E1E205B34FA62012135627456588F30AFFA9A61676C5FCFD6B8F1C33C`.
+- `BotanistUseSprinkler.dll` SHA-256: `293BD398E4CCAEF41BC1704AC7D5C9DA276F4AB8A2531F37F9000ECDE1962F4F`.
+- `BotanistsUseX.dll` SHA-256: `2F417EA782C02586E537257EFA4A80730F01585E3AA23265A8663ECC7DC5D491`.
 
 Final `2.0.0` archive hashes:
 
-- `BotanistUseSoilPourer-2.0.0.zip` SHA-256: `40FF53B1933359F41D16F66F514D526BB0DF580A74914FDCF58FC6CB7E91FA78`.
-- `BotanistUseSprinkler-2.0.0.zip` SHA-256: `3C1E7F374874153AF3F883F1EC44A8AB469DAE1E0F341114733866D98E66EB83`.
-- `BotanistsUseX-2.0.0.zip` SHA-256: `A6EF1669B265C1E57A5E39D0ED7CDF5C152FA6CEC8C7A7FDB119684EC9D4A418`.
+- `BotanistUseSoilPourer-2.0.0.zip` SHA-256: `DC078755E4FAADD3A4E8DDF6221A37C9F538C238C11416E37B05858FD185147B`.
+- `BotanistUseSprinkler-2.0.0.zip` SHA-256: `2C2CB1F5A742D8BFDB446C4426636535EFE9105F0CA487867D41964167C1918D`.
+- `BotanistsUseX-2.0.0.zip` SHA-256: `BB249451D15A1BF314A89671DEA8E3536406E444FE85B10946C30B026B73240F`.
 
 ## Runtime verification
 
@@ -105,7 +105,7 @@ Expected archives:
 - `artifacts/BotanistUseSprinkler-2.0.0.zip`
 - `artifacts/BotanistsUseX-2.0.0.zip`
 
-The archives and build output are intentionally ignored by Git.
+Each archive contains its DLL, `README.md`, `LICENSE.txt`, and `NOTICE.txt`. Archives and build output are intentionally ignored by Git.
 
 ## Known limitations and support boundaries
 
@@ -117,6 +117,8 @@ The archives and build output are intentionally ignored by Git.
 
 ## Release preparation
 
-- Nexus copy for all three variants is drafted in `docs/NEXUS_UPLOAD_DRAFTS.md`.
-- Image slots are deliberately left pending for owner-provided prompts.
+- GitHub release copy is drafted in `docs/RELEASE_NOTES_2.0.0.md`.
+- Nexus descriptions and upload sheets for all three variants are indexed in `docs/NEXUS_UPLOAD_DRAFTS.md`.
+- Supplied screenshots are committed under `docs/images`; branded headers and a dedicated sprinkler action shot remain pending.
+- Nexus publication is blocked until the Fortis/Nexus permission checkpoint in the drafts is resolved.
 - No Nexus page, GitHub release, merge, or public binary release should be created without separate owner approval.
