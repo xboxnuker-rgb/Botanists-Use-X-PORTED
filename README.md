@@ -1,3 +1,9 @@
+<!-- GSVS-REPOSITORY-MIGRATION -->
+> **New repository home:** This project moved from `xboxnuker-rgb/Botanists-Use-X-PORTED` to
+> [GSVS-UK-ACM/Botanists-Use-X-PORTED](https://github.com/GSVS-UK-ACM/Botanists-Use-X-PORTED).
+> Existing GitHub links redirect here. Continue using this repository under its
+> organisation address. Existing local checkouts can keep their folders.
+
 # Botanists Use X
 
 Botanists Use X restores Fortis's Soil Pourer and Sprinkler botanist ideas on current Schedule I IL2CPP builds. Install the combined configurable mod or choose either maintained individual port.
@@ -12,7 +18,7 @@ Botanists Use X restores Fortis's Soil Pourer and Sprinkler botanist ideas on cu
 [![Backend](https://img.shields.io/badge/backend-IL2CPP-6f42c1?style=for-the-badge)](docs/HANDOVER.md)
 [![Support on Patreon](https://img.shields.io/badge/Support_on-Patreon-FF424D?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/cw/GSVS_UK_ACM/shop)
 
-### [⬇️ OPEN GITHUB RELEASES](https://github.com/xboxnuker-rgb/Botanists-Use-X-PORTED/releases)
+### [⬇️ OPEN GITHUB RELEASES](https://github.com/GSVS-UK-ACM/Botanists-Use-X-PORTED/releases)
 
 The `2.0.0` release provides three installable files:
 
@@ -142,7 +148,7 @@ The DLL was built for another Schedule I version. Use the release that explicitl
 - Confirm the pourer contains compatible soil or the sprinkler is ready and has water.
 - Confirm the matching feature is enabled in the combined configuration.
 
-For reproducible reports, include the game version, mod version, host/client role, installed Botanist DLL names, reproduction steps, and `MelonLoader/Latest.log` on the [GitHub issue tracker](https://github.com/xboxnuker-rgb/Botanists-Use-X-PORTED/issues).
+For reproducible reports, include the game version, mod version, host/client role, installed Botanist DLL names, reproduction steps, and `MelonLoader/Latest.log` on the [GitHub issue tracker](https://github.com/GSVS-UK-ACM/Botanists-Use-X-PORTED/issues).
 
 ## Building the IL2CPP version
 
